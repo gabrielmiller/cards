@@ -24,11 +24,11 @@ func printOutput(handler http.Handler) http.Handler {
 
 func main(){
     fmt.Println(" > HTTP Server running...")
-    http.HandleFunc("/", index)
     http.HandleFunc("/static/", func(w http.ResponseWriter, req *http.Request) {
         http.ServeFile(w, req, req.URL.Path[1:])
     })  
-    serveFile("/favicon.ico", "./favicon.ico")
-    serveFile("/robots.txt", "./robots.txt")
+    serveFile("/favicon.ico", "./static/favicon.ico")
+    serveFile("/robots.txt", "./static/robots.txt")
+    http.HandleFunc("/", index)
     http.ListenAndServe(":8000", printOutput(http.DefaultServeMux))
 }
