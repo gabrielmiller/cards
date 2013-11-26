@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="css/cardstuff.css?v={{context.version}}" type="text/css"></style>
+    <link rel="stylesheet" href="css/lib/bootstrap/bootstrap.min.css" type="text/css"></style>
+    <link rel="stylesheet" href="css/lib/fontawesome/font-awesome.min.css" type="text/css"></style>
+    <script type="text/javascript" src="js/lib/jquery/jquery.min.js"></script>
+    <script type="text/javascript" src="js/lib/angular/angular.js"></script>
+    <script type="text/javascript" src="js/lib/angular/angular-route.js"></script>
+    <script type="text/javascript" src="js/lib/angular/angular-cookies.js"></script>
+    <script type="text/javascript" src="js/angular/app.js"></script>
+    <script type="text/javascript" src="js/angular/controllers.js"></script>
+    <title>Cards and Stuff</title>
+</head>
+
+<body ng-app="cardsApp" ng-controller="cardsController">
+    <div id="page_wrapper">
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="/">Cards and Stuff</a>
+                </div>
+                <div class="navbar-collapse collapse">
+                    <ul id="notifications" class="nav navbar-nav" ng-show="loggedIn === true">
+                        <li class="dropdown">
+                            <a role="button" href="#" class="dropdown-toggle" data-toggle="dropdown" data-target="#">
+                                <i class="fa fa-comment-o" ng-show="newNotifications===true"></i> Notifications
+                                <i class="fa fa-comment" ng-show="newNotifications===false"></i> Notifications
+                            </a>
+                            <ul class="dropdown-menu" role="menu" aria-labelledby="notification_button">
+                                <li class="notification" role="presentation">You have no notifications.</li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                        <li class="dropdown">
+                            <a id="account_button" role="button" href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                <i class="fa fa-angle-down"></i> User
+                            </a>
+                            <ul id="account_list" class="dropdown-menu" role="menu" aria-labelledby="account_button">
+                                <li role="presentation"><a href="/user"><i class="fa fa-user"></i> User Dashboard</a></li>
+                                <li role="presentation"><a href="/logout"><i class="fa fa-sign-out"></i> Logout</a></li>
+                            </ul>
+                        </li>
+                    <ul class="nav navbar-nav navbar-right" ng-show="loggedIn === false">
+                        <li class="dropdown">
+                            <a role="button" class="dropdown-toggle" data-toggle="dropdown">
+                                <i class="fa fa-sign-in"></i> Login
+                            </a>
+                            <form id="login" class="form-signin dropdown-menu" role="menu" method="post" action="/#/login">
+                                <div class="form-group">
+                                    <label for="signinEmail">Email</label>
+                                    <input id="signinEmail" type="text" class="form-control" placeholder="Email Address" name="signinEmail">
+                                </div>
+                                <div class="form-group">
+                                    <label for="signinPassword">Password</label>
+                                    <input id="signinPassword" type="password" class="form-control" placeholder="Password" name="signinPassword">
+                                </div>
+                                <div class="form-group">
+                                    <input type="checkbox" name="remember_me" id="remember_me">
+                                    <label for="signinRemember">Remember me</label>
+                                </div>
+                                <button id="login_button" class="btn btn-primary" type="submit">Login</button>
+                            </form>
+                        </li>
+                        <li>
+                            <a href="/#/signup">Register</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div ng-view></div>
+
+        <div id="footer_spacer"></div>
+    </div>
+    <div id="footer">
+        <div class="container">
+            <p>
+                &copy;{{year}} <a target="_blank" href="http://goatse.cx">Ryan Johnston</a> &amp; <a target="_blank" href="http://www.cheddarcode.com/g">L. Gabriel Miller</a>
+            </p>
+            <p>Card Stuff is an open source project. View/Contribute to/Fork our repository <a href="http://www.github.com/mrryanjohnston/Canvas-Fun">here</a>.</p>
+        </div>
+    </div>
+
+
+    <!--
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript"></script>
+    <script src="http://www.html5canvastutorials.com/libraries/kinetic-v3.10.1.js"></script>
+    -->
+    <!--
+    <script type="text/javascript" src="js/lib/kinetic/kinetic-v4.4.0.js"></script>
+    <script type="text/javascript" src="js/layout.js?v={{context.version}}"></script>
+    <script type="text/javascript" src="js/sockets.js?v={{context.version}}"></script>
+    -->
+    <script type="text/javascript" src="js/lib/socket.io/socket.io.min.js"></script>
+    <script type="text/javascript" src="js/lib/bootstrap/bootstrap.js"></script>
+
+</body>
+</html>

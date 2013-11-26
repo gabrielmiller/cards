@@ -1,7 +1,12 @@
 var cardsControllers = angular.module('cardsControllers', []);
 
 /* User controller */
-cardsControllers.controller('user', ['$scope', '$routeParams', '$location', function user($scope,$routeParams,$location,$cookies){ 
+cardsControllers.controller('cardsController', ['$scope', '$routeParams', '$location', function user($scope,$routeParams,$location,$cookies){ 
+
+    $scope.year = function(){
+        var thisYear = new Date();
+        return thisYear.getUTCFullYear();
+    }
 
     $scope.loggedIn = false;
 

@@ -1,0 +1,13 @@
+CREATE DATABASE cards IF NOT EXISTS;
+
+CREATE SEQUENCE user_id_sequence;
+
+CREATE TABLE users(
+    id INTEGER NOT NULL DEFAULT NEXTVAL('user_id_sequence'),
+    username VARCHAR(255) NOT NULL,
+    hash VARCHAR(255) NOT NULL,
+    salt VARCHAR(255) NOT NULL,
+    about VARCHAR(1023) DEFAULT NULL,
+    avatarPath VARCHAR(1023) DEFAULT NULL,
+    signupOn TIMESTAMP DEFAULT NOW()
+);
