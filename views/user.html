@@ -1,0 +1,195 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div id="update_error" class="alert alert-error none">
+    <p></p>
+</div>
+
+<div class="row-fluid">
+    <div class="span8">
+        <form id="user_form" class="form-horizontal"{% if !locals.other_user %} method="post" action="/user"{%endif%}>
+            {% if locals.other_user %}
+                {% if locals.avatar_url|length > 1 %}
+                    <img id="profile" class="img-polaroid" src="{{ locals.avatar_url }}">
+                {% else %}
+                    <img id="profile" class="img-polaroid right" data-src="holder.js/200x200">
+                {% endif %}
+            {% else %}
+                {% if session.avatar_url|length > 1 %}
+                    <img id="profile" class="img-polaroid" src="{{ session.avatar_url }}">
+                {% else %}
+                    <img id="profile" class="img-polaroid right" data-src="holder.js/200x200">
+                {% endif %}
+            {% endif %}
+            <div class="control-group clear">
+                <label class="control-label" for="username">Username: </label>
+                <div class="controls">
+                    <input id="username" type="text" name="username" class="input-block-level" value="{% if locals.other_user %}{{ locals.username }}{% else %}{{ session.username }}{% endif %}"{% if locals.other_user %} readonly{% endif %}>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="bio">About: </label>
+                <div class="controls">
+                    <textarea id="bio" name="bio" class="input-block-level"{% if locals.other_user %} readonly{% endif %}>{% if locals.other_user %}{{ locals.bio }}{% else %}{{ session.bio }}{% endif %}</textarea>
+                </div>
+            </div>
+            {% if !locals.other_user %}
+            <div class="control-group">
+                <label class="control-label" for="avatar_url">Avatar URL: </label>
+                <div class="controls">
+                    <input id="avatar_url" type="text" name="avatar" class="input-block-level" value="{{ session.avatar_url }}">
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="email">Email Address: </label>
+                <div class="controls">
+                    <input id="email" type="text" name="email" class="input-block-level" value="{{ session.email }}" placeholder="name@email.com">
+                </div>
+            </div>
+            <div id="error_email" class="alert alert-error none">
+                <p>
+                </p>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="email_confirmation">Confirm Email Address: </label>
+                <div class="controls">
+                    <input id="email_confirmation" name="email_confirmation" type="text" class="input-block-level" value="{{ session.email }}" placeholder="name@email.com">
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="password">Password: </label>
+                <div class="controls">
+                    <input id="password" name="password" type="password" class="input-block-level" placeholder="Leave blank to not change">
+                </div>
+            </div>
+            <div id="error_password" class="alert alert-error none">
+                <p>
+                </p>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="password_confirmation">Confirm Password: </label>
+                <div class="controls">
+                    <input id="password_confirmation" name="password_confirmation" type="password" class="input-block-level" placeholder="Leave blank to not change">
+                </div>
+            </div>
+            {% endif %}
+            <div class="control-group">
+                <label class="control-label" for="date_signup">Sign-up Date: </label>
+                <div class="controls">
+                    <input id="date_signup" name="date_signup" type="text" class="input-block-level" value="{% if locals.other_user %}{{ locals.date_signup|date('Y-m-d') }}{% else %}{{ session.date_signup|date('Y-m-d') }}{% endif %}" readonly>
+                </div>
+            </div>
+            {% if !locals.other_user %}
+            <div class="control-group">
+                <div class="controls">
+                    <button id="dashboard_submit" class="btn btn-large btn-primary" type="submit">Update</button>
+                </div>
+            </div>
+            {% endif %}
+        </form>
+    </div>
+    <div class="span4">
+        <div id="right_container" class="container-fluid">
+            <div class="row-fluid">
+                <div id="user_record" class="span12">
+                    <h4>Record</h4>
+                    <p>Wins: {% if locals.other_user %}{{ locals.record_games_won }}{% else %}{{ session.record_games_won }}{% endif %}</p>
+                    <p>Losses: {% if locals.other_user %}{{ locals.record_games_lost }}{% else %}{{ session.record_games_lost }}{% endif %}</p>
+                </div>
+            </div>
+            <br>
+            <div class="row-fluid">
+                <div id="friends_list" class="span12">
+                    <h4>Friends</h4>
+                    <div id="friends_container" class="container-fluid">
+                        <div class="row-fluid">
+                            <div class="span2">
+                                <img id="profile" class="img-polaroid" data-src="holder.js/32x32">
+                            </div>
+                            <div class="span10">
+                                <p><a href="#">Friend 1</a></p>
+                            </div>
+                        </div>
+                        <div class="row-fluid">
+                            <div class="span2">
+                                <img id="profile" class="img-polaroid" data-src="holder.js/32x32">
+                            </div>
+                            <div class="span10">
+                                <p><a href="#">Friend 2</a></p>
+                            </div>
+                        </div>
+                        <div class="row-fluid">
+                            <div class="span2">
+                                <img id="profile" class="img-polaroid" data-src="holder.js/32x32">
+                            </div>
+                            <div class="span10">
+                                <p><a href="#">Friend 3</a></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block js %}
+<script type="text/javascript" src="js/lib/holder/holder.js"></script>
+<script type="text/javascript">
+
+$(document).ready(function(){
+    $.getScript("js/lib/holder/holder.js", function on_load_holderjs(){
+        //If holder.js is used we have to wait until it is called before accessing image
+        $("#profile").css("max-width",$("#username_form").css("width")-24);
+    });
+});
+
+$("#email,#email_confirmation").change(function(){
+    if($("#email").val() !== $("#email_confirmation").val()){
+        $("#error_email").removeClass("none");
+        $("#error_email p").text("Your email addresses do not match.");
+    }else{
+        $("#error_email").addClass("none");
+        $("#error_email p").text("");
+    }
+});
+
+$("#password,#password_confirmation").change(function(){
+    if($("#password").val() !== $("#password_confirmation").val()){
+        $("#error_password").removeClass("none");
+        $("#error_password p").text("Your passwords do not match.");
+    }else{
+        $("#error_password").addClass("none");
+        $("#error_password p").text("");
+    }
+});
+
+$("#user_form").submit(function(){
+    event.preventDefault();
+    $.ajax({
+        url: 'user',
+        data: {
+            username: $("#username").val(),
+            bio: $("#bio").val(),
+            avatar_url: $("#avatar_url").val(),
+            email: $("#email").val(),
+            email_confirmation: $("#email_confirmation").val(),
+            password: $("#password").val(),
+            password_confirmation: $("#password_confirmation").val()
+        },
+        type: 'post',
+        error: function on_update_profile_failure(){
+            $("#update_error").removeClass("none");
+            $("#update_error p").text("There was an error updating your account.");
+        },
+        success: function on_update_profile_success(){
+            window.location.replace("/user");
+        }
+    });
+});
+
+</script>
+{% endblock %}
