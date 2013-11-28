@@ -21,17 +21,12 @@ cardsApp.config(['$routeProvider',
         $routeProvider.when('/', {
             authentication: false,
             templateUrl: 'partials/about.html',
-            controller: 'user'
+            controller: 'cardsController'
         }).
         when('/signup', {
             authentication: false,
             templateUrl: 'partials/signup.html',
-            controller: 'user'
-        }).
-        when('/signupp', {
-            authentication: true,
-            templateUrl: 'partials/signup.html',
-            controller: 'user'
+            controller: 'cardsController'
         }).
         otherwise({
             redirectTo: '/'

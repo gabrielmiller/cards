@@ -1,7 +1,7 @@
 var cardsControllers = angular.module('cardsControllers', []);
 
 /* User controller */
-cardsControllers.controller('cardsController', ['$scope', '$routeParams', '$location', function user($scope,$routeParams,$location,$cookies){ 
+cardsControllers.controller('cardsController', ['$scope', '$routeParams', '$location', function cardsController($scope,$routeParams,$location,$cookies){ 
 
     $scope.year = function(){
         var thisYear = new Date();

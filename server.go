@@ -9,13 +9,19 @@ func index(w http.ResponseWriter, req *http.Request){
     http.ServeFile(w, req, "./index.html")
 }
 
-func signup(w http.ResponseWriter, req *http.Request){
-    fmt.Println("signup hit")
+func user(w http.ResponseWriter, req *http.Request){
+    fmt.Println("user hit")
 }
 
 func serveFile(pattern string, filename string) {
     http.HandleFunc(pattern, func(w http.ResponseWriter, req *http.Request) {
         http.ServeFile(w, req, filename)
+    })
+}
+
+func serveStatic(path string){
+    http.HandleFunc(path, func(w http.ResponseWriter, req *http.Request) {
+        http.ServeFile(w, req, "./static"+req.URL.Path[0:])
     })
 }
 
@@ -28,10 +34,17 @@ func printOutput(handler http.Handler) http.Handler {
 
 func main(){
     fmt.Println(" > HTTP Server running...")
+    /*
     http.HandleFunc("/static/", func(w http.ResponseWriter, req *http.Request) {
         http.ServeFile(w, req, req.URL.Path[1:])
     })
-    http.HandleFunc("/signup", signup)
+    */
+    serveStatic("/css/")
+    serveStatic("/fonts/")
+    serveStatic("/js/")
+    serveStatic("/icons/")
+    serveStatic("/partials/")
+    http.HandleFunc("/user", user)
     http.HandleFunc("/", index)
     serveFile("/favicon.ico", "./static/favicon.ico")
     serveFile("/robots.txt", "./static/robots.txt")
