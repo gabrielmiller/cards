@@ -30,8 +30,9 @@
                     <ul id="notifications" class="nav navbar-nav" ng-show="loggedIn === true">
                         <li class="dropdown">
                             <a role="button" class="dropdown-toggle" data-toggle="dropdown" data-target="#">
-                                <i class="fa fa-comment-o" ng-show="newNotifications===true"></i> Notifications
-                                <i class="fa fa-comment" ng-show="newNotifications===false"></i> Notifications
+                                <i class="fa fa-comment-o" ng-show="newNotifications===true"></i>
+                                <i class="fa fa-comment" ng-show="newNotifications===false"></i>
+                                Notifications
                             </a>
                             <ul class="dropdown-menu" role="menu" aria-labelledby="notificationButton">
                                 <li class="notification" role="presentation">You have no notifications.</li>
@@ -44,8 +45,8 @@
                                 <i class="fa fa-angle-down"></i> User
                             </a>
                             <ul id="accountList" class="dropdown-menu" role="menu" aria-labelledby="accountButton">
-                                <li role="presentation"><a href="/user"><i class="fa fa-user"></i> User Dashboard</a></li>
-                                <li role="presentation"><a href="/logout"><i class="fa fa-sign-out"></i> Logout</a></li>
+                                <li role="presentation"><a href="/#/user"><i class="fa fa-user"></i> User Dashboard</a></li>
+                                <li role="presentation"><a ng-click="logout()"><i class="fa fa-sign-out"></i> Logout</a></li>
                             </ul>
                         </li>
                     </ul>
@@ -54,7 +55,7 @@
                             <a role="button" class="dropdown-toggle" data-toggle="dropdown">
                                 <i class="fa fa-angle-down"></i> Login
                             </a>
-                            <form id="login" class="form-signin dropdown-menu" role="menu" method="post" action="/#/login">
+                            <form id="login" class="form-signin dropdown-menu" role="menu" method="post" ng-submit="login()">
                                 <div class="form-group">
                                     <label for="signinEmail">Email</label>
                                     <input id="signinEmail" type="email" ng-model="userSigninEmail" class="form-control" placeholder="Email Address" name="signinEmail">

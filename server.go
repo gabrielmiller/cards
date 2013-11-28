@@ -11,6 +11,7 @@ func index(w http.ResponseWriter, req *http.Request){
 
 func user(w http.ResponseWriter, req *http.Request){
     fmt.Println("user hit")
+    fmt.Println(req)
 }
 
 func serveFile(pattern string, filename string) {
