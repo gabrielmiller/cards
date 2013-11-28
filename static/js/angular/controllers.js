@@ -1,7 +1,14 @@
 var cardsControllers = angular.module('cardsControllers', []);
 
 /* User controller */
-cardsControllers.controller('cardsController', ['$scope', '$routeParams', '$location', function cardsController($scope,$routeParams,$location,$cookies){ 
+cardsControllers.controller('cardsController', ['$scope', '$routeParams', '$http', '$location', function cardsController($scope,$routeParams,$http,$location){ 
+
+    /* Redirect unauthenticated users to a login form */
+    $scope.$watch(function() { return $location.path(); }, function(newValue, oldValue){
+        if($scope.loggedIn === false && (!(newValue in {'/signup':true,'/':true}))){  
+            $location.path('/');
+        }
+    });
 
     $scope.year = function(){
         var thisYear = new Date();
@@ -19,17 +26,19 @@ cardsControllers.controller('cardsController', ['$scope', '$routeParams', '$loca
     }
 
     $scope.signup = function(){
-        // Send ajax request to /signup
-        // if 200 then save the cookie
-        // $cookies[responseKey] = response;
-    }
-
-    /* Redirect unauthenticated users to a login form */
-    $scope.$watch(function() { return $location.path(); }, function(newValue, oldValue){
-        if($scope.loggedIn === false && (!(newValue in {'/signup':true,'/':true}))){  
-            $location.path('/');
-        }
-    });
+        $http.post("/user",{
+            userName: $scope.userSignupName,
+            userEmail: $scope.userSignupEmail,
+            userPassword: $scope.userSignupPassword
+        }).success(function(){
+            console.log("success");
+            // Send ajax request to /signup
+            // if 200 then save the cookie
+            // $cookies[responseKey] = response;
+        }).error(function(){
+            console.log("error");
+        });
+    };
 
 }]);
 

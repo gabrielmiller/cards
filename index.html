@@ -14,7 +14,7 @@
 </head>
 
 <body ng-app="cardsApp" ng-controller="cardsController">
-    <div id="page_wrapper">
+    <div id="pageWrapper">
         <div class="navbar navbar-default navbar-fixed-top" role="navigation">
             <div class="container">
                 <div class="navbar-header">
@@ -29,44 +29,48 @@
                 <div class="navbar-collapse collapse">
                     <ul id="notifications" class="nav navbar-nav" ng-show="loggedIn === true">
                         <li class="dropdown">
-                            <a role="button" href="#" class="dropdown-toggle" data-toggle="dropdown" data-target="#">
+                            <a role="button" class="dropdown-toggle" data-toggle="dropdown" data-target="#">
                                 <i class="fa fa-comment-o" ng-show="newNotifications===true"></i> Notifications
                                 <i class="fa fa-comment" ng-show="newNotifications===false"></i> Notifications
                             </a>
-                            <ul class="dropdown-menu" role="menu" aria-labelledby="notification_button">
+                            <ul class="dropdown-menu" role="menu" aria-labelledby="notificationButton">
                                 <li class="notification" role="presentation">You have no notifications.</li>
                             </ul>
                         </li>
                     </ul>
-                    <ul class="nav navbar-nav navbar-right">
+                    <ul class="nav navbar-nav navbar-right" ng-show="loggedIn === true">
                         <li class="dropdown">
-                            <a id="account_button" role="button" href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <a id="accountButton" role="button" class="dropdown-toggle" data-toggle="dropdown">
                                 <i class="fa fa-angle-down"></i> User
                             </a>
-                            <ul id="account_list" class="dropdown-menu" role="menu" aria-labelledby="account_button">
+                            <ul id="accountList" class="dropdown-menu" role="menu" aria-labelledby="accountButton">
                                 <li role="presentation"><a href="/user"><i class="fa fa-user"></i> User Dashboard</a></li>
                                 <li role="presentation"><a href="/logout"><i class="fa fa-sign-out"></i> Logout</a></li>
                             </ul>
                         </li>
+                    </ul>
                     <ul class="nav navbar-nav navbar-right" ng-show="loggedIn === false">
                         <li class="dropdown">
                             <a role="button" class="dropdown-toggle" data-toggle="dropdown">
-                                <i class="fa fa-sign-in"></i> Login
+                                <i class="fa fa-angle-down"></i> Login
                             </a>
                             <form id="login" class="form-signin dropdown-menu" role="menu" method="post" action="/#/login">
                                 <div class="form-group">
                                     <label for="signinEmail">Email</label>
-                                    <input id="signinEmail" type="text" class="form-control" placeholder="Email Address" name="signinEmail">
+                                    <input id="signinEmail" type="email" ng-model="userSigninEmail" class="form-control" placeholder="Email Address" name="signinEmail">
                                 </div>
                                 <div class="form-group">
                                     <label for="signinPassword">Password</label>
-                                    <input id="signinPassword" type="password" class="form-control" placeholder="Password" name="signinPassword">
+                                    <input id="signinPassword" type="password" ng-model="userSigninPassword" class="form-control" placeholder="Password" name="signinPassword">
                                 </div>
                                 <div class="form-group">
-                                    <input type="checkbox" name="remember_me" id="remember_me">
-                                    <label for="signinRemember">Remember me</label>
+                                    <input id="rememberMe" type="checkbox" name="rememberMe" ng-model="userSigninRemember">
+                                    <label for="rememberMe">Remember me</label>
                                 </div>
-                                <button id="login_button" class="btn btn-primary" type="submit">Login</button>
+                                <button class="btn btn-primary" type="submit">
+                                <i class="fa fa-sign-in"></i>
+                                Login
+                                </button>
                             </form>
                         </li>
                         <li>
@@ -79,7 +83,7 @@
 
         <div ng-view></div>
 
-        <div id="footer_spacer"></div>
+        <div id="footerSpacer"></div>
     </div>
     <div id="footer">
         <div class="container">
