@@ -45,15 +45,13 @@ func user(w http.ResponseWriter, req *http.Request){
     fmt.Println(user.Email)
     fmt.Println(user.Password)
     fmt.Println(user.Hash)
+    fmt.Println(user.Salt)
     fmt.Println(user.Remember)
     fmt.Println(user.TOS)
 
     switch req.Method {
         case "POST":
-            var insert *sql.Stmt
-            insert, _ = db.Prepare("INSERT INTO users (username, hash, salt) VALUES (?, ?, ?)")
-            insert.Exec(user.Name, user.Hash, user.Salt)
-            //db.Exec(`INSERT INTO users (username, hash, salt) VALUES ('{user.Name,user.Hash,user.Salt}')`)
+            db.Query(`INSERT INTO users (username, hash, salt) VALUES ($1, $2, $3)`, user.Name, user.Hash, user.Salt)
         case "GET":
             fmt.Println("GET / no action specified")
         default:
@@ -104,7 +102,11 @@ func dbConnect() *sql.DB {
     if sslMode == "" {
         os.Setenv("SSL", "disable")
     }
-    conn, err := sql.Open("postgres", "")
+    conn, err := sql.Open("postgres", "dbname=cards password=PASSWORD")
+    if err != nil {
+        panic(err)
+    }
+    err = conn.Ping()
     if err != nil {
         panic(err)
     }
