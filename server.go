@@ -51,7 +51,7 @@ func user(w http.ResponseWriter, req *http.Request){
 
     switch req.Method {
         case "POST":
-            db.Query(`INSERT INTO users (username, hash, salt) VALUES ($1, $2, $3)`, user.Name, user.Hash, user.Salt)
+            db.Query(`INSERT INTO users (username, email, hash, salt) VALUES ($1, $2, $3, $4)`, user.Name, user.Email, user.Hash, user.Salt)
         case "GET":
             fmt.Println("GET / no action specified")
         default:
@@ -98,11 +98,13 @@ func dbConnect() *sql.DB {
     sslMode := os.Getenv("SSL")
     if databaseName == "" {
         os.Setenv("DATABASENAME", "cards")
+        databaseName = "cards"
     }
     if sslMode == "" {
         os.Setenv("SSL", "disable")
+        sslMode = "disable"
     }
-    conn, err := sql.Open("postgres", "dbname=cards password=PASSWORD")
+    conn, err := sql.Open("postgres", "dbname="+databaseName+" password=PASSWORD")
     if err != nil {
         panic(err)
     }
