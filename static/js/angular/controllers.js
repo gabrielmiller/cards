@@ -19,9 +19,9 @@ cardsControllers.controller('cardsController', ['$scope', '$routeParams', '$http
 
     $scope.login = function(){
         $http.post("/user",{
-            userEmail: $scope.userSigninEmail,
-            userPassword: $scope.userSigninPassword,
-            userRemember: $scope.userSigninRemember,
+            Email: $scope.userSigninEmail,
+            Password: $scope.userSigninPassword,
+            Remember: $scope.userSigninRemember,
         }).success(function(){
             console.log("signin success");
             // if 200 then save the cookie
@@ -38,10 +38,10 @@ cardsControllers.controller('cardsController', ['$scope', '$routeParams', '$http
 
     $scope.signup = function(){
         $http.post("/user",{
-            userName: $scope.userSignupName,
-            userEmail: $scope.userSignupEmail,
-            userPassword: $scope.userSignupPassword,
-            userTOS: $scope.userSignupTOS,
+            Name: $scope.userSignupName,
+            Email: $scope.userSignupEmail,
+            Password: $scope.userSignupPassword,
+            TOS: $scope.userSignupTOS,
         }).success(function(){
             console.log("signup success");
             // if 200 then confirm signup success

@@ -1,22 +1,28 @@
 package main
 
 import(
-    "fmt"
-    "net/http"
+    "crypto/hmac"
+    "crypto/rand"
+    "crypto/sha512"
+    "database/sql"
     "encoding/hex"
     "encoding/json"
-    "crypto/sha512"
-    //"database/sql"
-    //"github.com/bmizerany/pq" //_
+    _ "github.com/bmizerany/pq"
+    "fmt"
+    "net/http"
+    "os"
 )
 
+var db = dbConnect()
+
 type User struct {
-    UserName string
-    UserEmail string
-    UserPassword string
-    UserHash string
-    UserRemember bool
-    UserTOS bool
+    Name string
+    Email string
+    Password string
+    Hash string
+    Salt string
+    Remember bool
+    TOS bool
 }
 
 func index(w http.ResponseWriter, req *http.Request){
@@ -26,19 +32,33 @@ func index(w http.ResponseWriter, req *http.Request){
 func user(w http.ResponseWriter, req *http.Request){
     fmt.Println("-------------")
     fmt.Println(req.Method)
+
     user := new(User)
     json.NewDecoder(req.Body).Decode(user)
-    hash := sha512.New()
-    hash.Write([]byte("this is a test"))
-    hashArray := make([]byte, hash.Size())
-    hash.Sum(hashArray[:0])
-    user.UserHash = hex.EncodeToString(hashArray)
-    fmt.Println(user.UserName)
-    fmt.Println(user.UserEmail)
-    fmt.Println(user.UserPassword)
-    fmt.Println(user.UserHash)
-    fmt.Println(user.UserRemember)
-    fmt.Println(user.UserTOS)
+    user.Salt = generateRandomString(255)
+    key := []byte(user.Password)
+    hmac := hmac.New(sha512.New, key)
+    hmac.Write([]byte(user.Salt))
+    user.Hash = hex.EncodeToString(hmac.Sum(nil))
+
+    fmt.Println(user.Name)
+    fmt.Println(user.Email)
+    fmt.Println(user.Password)
+    fmt.Println(user.Hash)
+    fmt.Println(user.Remember)
+    fmt.Println(user.TOS)
+
+    switch req.Method {
+        case "POST":
+            var insert *sql.Stmt
+            insert, _ = db.Prepare("INSERT INTO users (username, hash, salt) VALUES (?, ?, ?)")
+            insert.Exec(user.Name, user.Hash, user.Salt)
+            //db.Exec(`INSERT INTO users (username, hash, salt) VALUES ('{user.Name,user.Hash,user.Salt}')`)
+        case "GET":
+            fmt.Println("GET / no action specified")
+        default:
+            fmt.Println("no action specified")
+    }
 }
 
 func serveFile(pattern string, filename string) {
@@ -61,6 +81,7 @@ func printOutput(handler http.Handler) http.Handler {
 }
 
 func main(){
+    defer db.Close()
     fmt.Println(" > HTTP Server running...")
     serveStatic("/css/")
     serveStatic("/fonts/")
@@ -72,4 +93,30 @@ func main(){
     http.HandleFunc("/user", user)
     http.HandleFunc("/", index)
     http.ListenAndServe(":8000", printOutput(http.DefaultServeMux))
+}
+
+func dbConnect() *sql.DB {
+    databaseName := os.Getenv("DATABASENAME")
+    sslMode := os.Getenv("SSL")
+    if databaseName == "" {
+        os.Setenv("DATABASENAME", "cards")
+    }
+    if sslMode == "" {
+        os.Setenv("SSL", "disable")
+    }
+    conn, err := sql.Open("postgres", "")
+    if err != nil {
+        panic(err)
+    }
+    return conn
+}
+
+func generateRandomString(length int) string {
+    alphanum := "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+    var bytes = make([]byte, length)
+    rand.Read(bytes)
+    for i, b := range bytes {
+        bytes[i] = alphanum[b%byte(len(alphanum))]
+    }
+    return string(bytes)
 }
