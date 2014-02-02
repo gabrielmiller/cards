@@ -11,7 +11,7 @@ Lots of Javascript stuff.
  * [Grunt](http://www.gruntjs.com)
  * [Bower](http://www.bower.io)
 
-And some other convenient stuff too:
+And some other convenient stuff:
  * [Compass](http://www.compass-style.org/)
  * [Twitter Bootstrap](http://twitter.github.io/bootstrap)
  * [Redis](http://www.redis.io/)
@@ -23,7 +23,8 @@ And some other convenient stuff too:
 2. [Install redis](#redis) and start it with the provided redis.conf(change your password and anything else you'd like).
 3. npm preinstall
 4. npm install
-5. npm start or npm test
+5. Follow the [preinstallation](#preinstallation) steps.
+6. npm start or npm test
 
 ### Controlling the application
 Start, stop, and restart the application as a long running process, respectively:
