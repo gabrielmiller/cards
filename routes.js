@@ -40,7 +40,7 @@ app.post('/login', function(req, res) {
         models.user.findOne({ email: email },
             function find_account_record_at_login(error, account){
                 if(account !== null){
-                    if(account.password == crypto.createHmac("sha1", account.salt).update(password).digest("hex")){
+                    if(account.password == crypto.createHmac("sha512", account.salt).update(password).digest("hex")){
                     req.session._id = account._id;
                     req.session.email = email;
                     req.session.username = account.username;
@@ -96,7 +96,7 @@ app.post('/signup', function(req, res) {
             res.send(409);
         }else{
             var salt = settings.mongodb_salt_keyword+String(Date.now());
-            var password = crypto.createHmac("sha1", salt).update(req.body.password).digest("hex");
+            var password = crypto.createHmac("sha512", salt).update(req.body.password).digest("hex");
             var account = new models.user({
                 username: req.body.username,
                 email: req.body.email,
