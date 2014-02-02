@@ -54,6 +54,7 @@ Get grunt and bower, and download and configure static files through them:
 
     npm install -g grunt-cli@0.1.13
     npm install -g bower@1.2.8
+    bower install
     grunt copy
 
 ###Mongoose package
