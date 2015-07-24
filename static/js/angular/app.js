@@ -1,1 +1,1 @@
-var cardsApp = angular.module('cardsApp', ['ui.router']);
+var cardsApp = angular.module('cardsApp', ['ui.bootstrap', 'ui.router']);
