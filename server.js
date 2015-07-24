@@ -17,6 +17,7 @@ console.log(color.fgmagenta+"Express loaded."+color.reset);
 
 var server = require('http').createServer(app);
 console.log(color.fggreen+"HTTP Server started."+color.reset);
+
 //var sio = require('socket.io').listen(server);
 //console.log(color.fgcyan+"Socket.io loaded."+color.reset);
 //var crypto = require('crypto');
