@@ -18,6 +18,41 @@ console.log(color.fgmagenta+"Express loaded."+color.reset);
 var server = require('http').createServer(app);
 console.log(color.fggreen+"HTTP Server started."+color.reset);
 
+var jwt = require('jsonwebtoken');
+var expressJwt = require('express-jwt');
+var bodyParser = require('body-parser');
+
+app.use('/user', expressJwt({secret: settings.jwtSecret}));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: false}));
+
+app.post('/authenticate', function(req, res) {
+    if (!(req.body.username === "test" && req.body.password === "test")) {
+        console.log("Could not authenticate");
+        res
+            .status(401)
+            .send("Wrong username or password");
+        return;
+    }
+
+    console.log("Authenticating");
+
+    var user = {
+        email: "test@test.com",
+        id: 1,
+        username: "test"
+    };
+
+    var token = jwt.sign(user, settings.jwtSecret, { expiresInMinutes: 60*4 });
+
+    res.json({ token: token });
+});
+
+app.get('/user', function(req, res) {
+    console.log("user calling is", req.user);
+    res.json("hello");
+});
+
 //var sio = require('socket.io').listen(server);
 //console.log(color.fgcyan+"Socket.io loaded."+color.reset);
 //var crypto = require('crypto');

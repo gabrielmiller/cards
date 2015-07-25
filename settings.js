@@ -18,6 +18,7 @@ function settings() {
         * Web server settings
         */
         cookie_secret: "11rn@J2d9SSv21qz%17201439pKTB28cnOWe4cjd!kd",
+        jwtSecret: "2cards2furious",
         session_key: "2cards2furious",
         session_secret: "p2(236cVb3S#a,25gffDxrR|tb{{bddR31aAz35917",
         port: 8000,

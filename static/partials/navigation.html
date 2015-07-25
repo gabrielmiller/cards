@@ -47,17 +47,17 @@
                     <form
                         class="form-signin dropdown-menu"
                         id="login"
-                        ng-submit="navigation.signin(navigation.email, navigation.password)"
+                        ng-submit="navigation.signin(navigation.username, navigation.password)"
                         role="menu">
                         <div class="form-group">
-                            <label for="signinEmail">Email</label>
+                            <label for="signinUsername">Username</label>
                             <input
                                 class="form-control"
-                                id="signinEmail"
-                                name="signinEmail"
-                                ng-model="navigation.email"
+                                id="signinUsername"
+                                name="signinUsername"
+                                ng-model="navigation.username"
                                 type="text"
-                                placeholder="Email Address">
+                                placeholder="Username">
                         </div>
                         <div class="form-group">
                             <label for="signinPassword">Password</label>
