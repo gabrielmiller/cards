@@ -53,6 +53,10 @@ app.get('/user', function(req, res) {
     res.json("hello");
 });
 
+app.get('/user/authenticated', function(req, res) {
+    res.json(true);
+});
+
 //var sio = require('socket.io').listen(server);
 //console.log(color.fgcyan+"Socket.io loaded."+color.reset);
 //var crypto = require('crypto');

@@ -10,25 +10,28 @@
     function NavigationCtrl($http, $window) {
         var vm = this;
 
+        // properties
         vm.isAuthenticated = false;
         vm.isSigninDropdownOpen = false;
         vm.password = "";
         vm.username = "";
 
+        // methods
+        vm.initialize = initialize;
         vm.signin = signin;
 
-        function signin(username, password) {
+
+        initialize();
+
+
+        function checkIfAuthenticated() {
             $http
-                .post('/authenticate', {username: username, password: password})
-                .then(function(response) {
-                    $window.sessionStorage.token = response.data.token;
-                    console.log("authenticate: success!");
-                    console.log(arguments);
-                    getUser();
-                    vm.isSigninDropdownOpen = false;
+                .get('/user/authenticated')
+                .then(function() {
+                    vm.isAuthenticated = true;
+                    console.log("You're authenticated!");
                 }, function() {
-                    console.log("authenticate: error!");
-                    console.log(arguments);
+                    console.log("You're not authenticated!");
                 });
         }
 
@@ -42,6 +45,28 @@
                     console.log("get user: error!");
                     console.log(arguments);
                 });
+        }
+
+        function initialize() {
+            checkIfAuthenticated();
+        }
+
+        function signin(username, password) {
+            var req = $http
+                .post('/authenticate', {username: username, password: password})
+                .then(function(response) {
+                    $window.sessionStorage.token = response.data.token;
+                    console.log("authenticate: success!");
+                    console.log(arguments);
+                    vm.isSigninDropdownOpen = false;
+                }, function() {
+                    console.log("authenticate: error!");
+                    console.log(arguments);
+                });
+
+            req.finally(function() {
+                getUser();
+            });
         }
     }
 })();
