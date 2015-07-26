@@ -11,8 +11,10 @@
         var vm = this;
 
         // properties
+        vm.hasNewNotifications = false;
         vm.isAuthenticated = false;
         vm.isSigninDropdownOpen = false;
+        vm.isUserDropdownOpen = false;
         vm.password = "";
         vm.username = "";
 
