@@ -35,6 +35,12 @@
                 controllerAs: "signup",
                 templateUrl: "partials/signup.html",
                 url: "/signup"
+            })
+            .state("user", {
+                controller: "userCtrl",
+                controllerAs: "user",
+                templateUrl: "partials/user.html",
+                url: "/user"
             });
     }
 })();

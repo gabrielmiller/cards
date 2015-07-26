@@ -20,6 +20,7 @@
 
         // methods
         vm.initialize = initialize;
+        vm.logout = logout;
         vm.signin = signin;
 
 
@@ -53,6 +54,12 @@
             checkIfAuthenticated();
         }
 
+        function logout() {
+            delete $window.sessionStorage.token;
+            vm.isAuthenticated = false;
+            vm.isUserDropdownOpen = false;
+        }
+
         function signin(username, password) {
             var req = $http
                 .post('/authenticate', {username: username, password: password})
@@ -61,6 +68,7 @@
                     console.log("authenticate: success!");
                     console.log(arguments);
                     vm.isSigninDropdownOpen = false;
+                    checkIfAuthenticated();
                 }, function() {
                     console.log("authenticate: error!");
                     console.log(arguments);
