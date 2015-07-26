@@ -18,6 +18,9 @@ console.log(color.fgmagenta+"Express loaded."+color.reset);
 var server = require('http').createServer(app);
 console.log(color.fggreen+"HTTP Server started."+color.reset);
 
+var sqlite3 = require('sqlite3').verbose();
+var db = new sqlite3.Database(':memory');
+
 var jwt = require('jsonwebtoken');
 var expressJwt = require('express-jwt');
 var bodyParser = require('body-parser');
@@ -66,12 +69,7 @@ app.get('/user/authenticated', function(req, res) {
 /**
 * Load the database and models
 */
-//var mongoose = require('mongoose');
 //console.log(color.fgwhite+"DB loaded."+color.reset);
-//mongoose.connect(settings.database_host+":"+settings.database_port+"/"+settings.mongodb_database_name, settings.mongodb_options);
-//console.log(color.bgwhite+color.fgblack+"DB connected."+color.reset);
-//var models = require(settings.models_path)(mongoose, settings);
-//console.log(color.fgblue+"Models loaded."+color.reset);
 
 /**
 * Load websockets
