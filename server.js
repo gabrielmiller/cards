@@ -66,12 +66,14 @@ app.post('/user', function(req, res) {
         res
             .status(403)
             .send("Authenticated users cannot create a new user.");
+        return;
     }
 
     if (!("body" in req) || !("username" in req.body) || !("password" in req.body)) {
         res
             .status(400)
             .send("Invalid request.");
+        return;
     }
 
     var hash,
