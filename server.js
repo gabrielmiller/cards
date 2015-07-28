@@ -19,13 +19,13 @@ var server = require('http').createServer(app);
 console.log(color.fggreen+"HTTP Server started."+color.reset);
 
 var sqlite3 = require('sqlite3').verbose();
-var db = new sqlite3.Database(':memory');
+var db = new sqlite3.Database('cards');
 
 var jwt = require('jsonwebtoken');
 var expressJwt = require('express-jwt');
 var bodyParser = require('body-parser');
 
-app.use('/user', expressJwt({secret: settings.jwtSecret}));
+//app.use('/user', expressJwt({secret: settings.jwtSecret}));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 
@@ -41,8 +41,8 @@ app.post('/authenticate', function(req, res) {
     console.log("Authenticating");
 
     var user = {
-        email: "test@test.com",
         id: 1,
+        password: "test",
         username: "test"
     };
 
@@ -51,13 +51,50 @@ app.post('/authenticate', function(req, res) {
     res.json({ token: token });
 });
 
-app.get('/user', function(req, res) {
+app.get('/user', expressJwt({secret: settings.jwtSecret}), function(req, res) {
     console.log("user calling is", req.user);
     res.json("hello");
 });
 
-app.get('/user/authenticated', function(req, res) {
+app.get('/user/authenticated', expressJwt({secret: settings.jwtSecret}), function(req, res) {
     res.json(true);
+});
+
+app.post('/user', function(req, res) {
+    console.log("user POSTing is", req.user);
+    if (req.user) {
+        res
+            .status(403)
+            .send("Authenticated users cannot create a new user.");
+    }
+
+    if (!("body" in req) || !("username" in req.body) || !("password" in req.body)) {
+        res
+            .status(400)
+            .send("Invalid request.");
+    }
+
+    var hash,
+        salt;
+
+    hash = "hamburger";
+    salt = "hotdog";
+
+    var params = [];
+    params.push(req.body.username);
+    params.push(hash);
+    params.push(salt);
+
+    db.run("INSERT INTO cards.users (username, hash, salt) VALUES (?, ?, ?)");
+
+    var user = {
+        password: req.body.password,
+        username: req.body.username,
+    };
+
+    res
+        .status(200)
+        .send(user);
 });
 
 //var sio = require('socket.io').listen(server);
