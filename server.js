@@ -19,7 +19,11 @@ var server = require('http').createServer(app);
 console.log(color.fggreen+"HTTP Server started."+color.reset);
 
 var sqlite3 = require('sqlite3').verbose();
-var db = new sqlite3.Database('cards');
+var db = new sqlite3.Database(':memory:');
+
+db.serialize(function() {
+    db.run("CREATE TABLE users (id INT, username VARCHAR(255), salt VARCHAR(255), hash VARCHAR(255), PRIMARY KEY(id ASC))");
+});
 
 var jwt = require('jsonwebtoken');
 var expressJwt = require('express-jwt');
@@ -53,7 +57,11 @@ app.post('/authenticate', function(req, res) {
 
 app.get('/user', expressJwt({secret: settings.jwtSecret}), function(req, res) {
     console.log("user calling is", req.user);
-    res.json("hello");
+    var users = [];
+    db.each("SELECT id, username FROM users", function(err, row) {
+        users.push[row];
+    });
+    res.json(users);
 });
 
 app.get('/user/authenticated', expressJwt({secret: settings.jwtSecret}), function(req, res) {
@@ -87,7 +95,7 @@ app.post('/user', function(req, res) {
     params.push(hash);
     params.push(salt);
 
-    db.run("INSERT INTO cards.users (username, hash, salt) VALUES (?, ?, ?)");
+    db.run("INSERT INTO users (username, hash, salt) VALUES (?, ?, ?)");
 
     var user = {
         password: req.body.password,
