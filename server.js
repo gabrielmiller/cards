@@ -20,7 +20,7 @@ console.log(color.fggreen+"HTTP Server started."+color.reset);
 
 var sqlite3 = require('sqlite3').verbose();
 var db = new sqlite3.Database(':memory:');
-db.run("CREATE TABLE users (username VARCHAR(255), salt VARCHAR(255), hash VARCHAR(255))");
+db.run("CREATE TABLE users (username VARCHAR(255) UNIQUE, salt VARCHAR(255), hash VARCHAR(255))");
 
 var jwt = require('jsonwebtoken');
 var expressJwt = require('express-jwt');
@@ -84,6 +84,19 @@ app.post('/user', function(req, res) {
         return;
     }
 
+    var getParams = [req.body.username];
+    db.get("SELECT username FROM users WHERE username = (?)", getParams, function(err, row) {
+        if (!row) {
+            createUser();
+            return;
+        }
+
+        res
+            .status(400)
+            .send("This username is already taken.");
+        return;
+    });
+
     function makeSalt() {
         var characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
         var saltArray = [];
@@ -93,29 +106,31 @@ app.post('/user', function(req, res) {
         return saltArray.join("");
     }
 
-    var hash,
-        salt = makeSalt();
+    function createUser() {
+        var hash,
+            salt = makeSalt();
 
-    hash = crypto
-        .createHmac("sha1", salt)
-        .update(req.body.password)
-        .digest("hex");
+        hash = crypto
+            .createHmac("sha1", salt)
+            .update(req.body.password)
+            .digest("hex");
 
-    var params = [];
-    params.push(req.body.username);
-    params.push(hash);
-    params.push(salt);
+        var params = [];
+        params.push(req.body.username);
+        params.push(hash);
+        params.push(salt);
 
-    db.run("INSERT INTO users (username, hash, salt) VALUES (?, ?, ?)", params);
+        db.run("INSERT INTO users (username, hash, salt) VALUES (?, ?, ?)", params);
 
-    var user = {
-        password: req.body.password,
-        username: req.body.username,
-    };
+        var user = {
+            password: req.body.password,
+            username: req.body.username,
+        };
 
-    res
-        .status(200)
-        .send(user);
+        res
+            .status(200)
+            .send(user);
+    }
 });
 
 //var sio = require('socket.io').listen(server);
