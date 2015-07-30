@@ -20,14 +20,14 @@ console.log(color.fggreen+"HTTP Server started."+color.reset);
 
 var sqlite3 = require('sqlite3').verbose();
 var db = new sqlite3.Database(':memory:');
-
-db.serialize(function() {
-    db.run("CREATE TABLE users (id INT, username VARCHAR(255), salt VARCHAR(255), hash VARCHAR(255), PRIMARY KEY(id ASC))");
-});
+db.run("CREATE TABLE users (username VARCHAR(255), salt VARCHAR(255), hash VARCHAR(255))");
 
 var jwt = require('jsonwebtoken');
 var expressJwt = require('express-jwt');
 var bodyParser = require('body-parser');
+
+var crypto = require('crypto');
+console.log(color.fggreen+"Crypto loaded."+color.reset);
 
 //app.use('/user', expressJwt({secret: settings.jwtSecret}));
 app.use(bodyParser.json());
@@ -56,12 +56,13 @@ app.post('/authenticate', function(req, res) {
 });
 
 app.get('/user', expressJwt({secret: settings.jwtSecret}), function(req, res) {
-    console.log("user calling is", req.user);
     var users = [];
-    db.each("SELECT id, username FROM users", function(err, row) {
-        users.push[row];
+
+    db.each("SELECT rowid AS id, username FROM users", function(err, row) {
+        users.push(row);
+    }, function() {
+        res.json(users);
     });
-    res.json(users);
 });
 
 app.get('/user/authenticated', expressJwt({secret: settings.jwtSecret}), function(req, res) {
@@ -69,7 +70,6 @@ app.get('/user/authenticated', expressJwt({secret: settings.jwtSecret}), functio
 });
 
 app.post('/user', function(req, res) {
-    console.log("user POSTing is", req.user);
     if (req.user) {
         res
             .status(403)
@@ -84,18 +84,29 @@ app.post('/user', function(req, res) {
         return;
     }
 
-    var hash,
-        salt;
+    function makeSalt() {
+        var characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        var saltArray = [];
+        for (var i=0; i < 32; i++) {
+            saltArray.push(characters.charAt(Math.floor(Math.random() * characters.length)));
+        }
+        return saltArray.join("");
+    }
 
-    hash = "hamburger";
-    salt = "hotdog";
+    var hash,
+        salt = makeSalt();
+
+    hash = crypto
+        .createHmac("sha1", salt)
+        .update(req.body.password)
+        .digest("hex");
 
     var params = [];
     params.push(req.body.username);
     params.push(hash);
     params.push(salt);
 
-    db.run("INSERT INTO users (username, hash, salt) VALUES (?, ?, ?)");
+    db.run("INSERT INTO users (username, hash, salt) VALUES (?, ?, ?)", params);
 
     var user = {
         password: req.body.password,
@@ -109,8 +120,6 @@ app.post('/user', function(req, res) {
 
 //var sio = require('socket.io').listen(server);
 //console.log(color.fgcyan+"Socket.io loaded."+color.reset);
-//var crypto = require('crypto');
-//console.log(color.fggreen+"Crypto loaded."+color.reset);
 //var string = require('string');
 
 /**
