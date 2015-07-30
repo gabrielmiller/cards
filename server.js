@@ -34,25 +34,50 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 
 app.post('/authenticate', function(req, res) {
-    if (!(req.body.username === "test" && req.body.password === "test")) {
-        console.log("Could not authenticate");
+
+    if (!("body" in req) || !("username" in req.body) || !("password" in req.body)) {
         res
-            .status(401)
-            .send("Wrong username or password");
+            .status(400)
+            .send("Invalid request.");
         return;
     }
 
-    console.log("Authenticating");
+    var getParams = [req.body.username];
+    db.get("SELECT salt, hash FROM users WHERE username = (?)", getParams, function(err, row) {
+        if (row) {
+            validatePassword(row, req.body.password);
+            return;
+        }
 
-    var user = {
-        id: 1,
-        password: "test",
-        username: "test"
-    };
+        res
+            .status(400)
+            .send("Invalid credentials.");
+    });
 
-    var token = jwt.sign(user, settings.jwtSecret, { expiresInMinutes: 60*4 });
+    function signToken(user) {
+        var token = res.json({
+            token: jwt.sign(user, settings.jwtSecret, {
+                expiresInMinutes: 60*4 }
+            )}
+        );
+    }
 
-    res.json({ token: token });
+    function validatePassword(user, password) {
+        var expectedHash = crypto
+            .createHmac("sha1", user.salt)
+            .update(password)
+            .digest("hex");
+
+        if (expectedHash !== user.hash) {
+            res
+                .status(400)
+                .send("Invalid credentials.");
+            return;
+        }
+
+        signToken(user);
+    }
+
 });
 
 app.get('/user', expressJwt({secret: settings.jwtSecret}), function(req, res) {
@@ -77,7 +102,7 @@ app.post('/user', function(req, res) {
         return;
     }
 
-    if (!("body" in req) || !("username" in req.body) || !("password" in req.body)) {
+    if (!("body" in req) || !("username" in req.body) || req.body.username.length < 1 || !("password" in req.body) || req.body.password.length < 1) {
         res
             .status(400)
             .send("Invalid request.");
@@ -97,15 +122,6 @@ app.post('/user', function(req, res) {
         return;
     });
 
-    function makeSalt() {
-        var characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-        var saltArray = [];
-        for (var i=0; i < 32; i++) {
-            saltArray.push(characters.charAt(Math.floor(Math.random() * characters.length)));
-        }
-        return saltArray.join("");
-    }
-
     function createUser() {
         var hash,
             salt = makeSalt();
@@ -122,14 +138,18 @@ app.post('/user', function(req, res) {
 
         db.run("INSERT INTO users (username, hash, salt) VALUES (?, ?, ?)", params);
 
-        var user = {
-            password: req.body.password,
-            username: req.body.username,
-        };
-
         res
-            .status(200)
-            .send(user);
+            .status(204)
+            .send();
+    }
+
+    function makeSalt() {
+        var characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        var saltArray = [];
+        for (var i=0; i < 32; i++) {
+            saltArray.push(characters.charAt(Math.floor(Math.random() * characters.length)));
+        }
+        return saltArray.join("");
     }
 });
 
