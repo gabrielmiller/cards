@@ -13,7 +13,7 @@
             <a class="navbar-brand" ui-sref="home">Cards and Stuff</a>
         </div>
         <div class="navbar-collapse collapse">
-            <ul class="nav navbar-nav" ng-if="navigation.isAuthenticated">
+            <ul class="nav navbar-nav" ng-if="navigation.authentication.active">
                 <li
                     class="dropdown"
                     auto-close="outsideClick"
@@ -34,7 +34,7 @@
                     </ul>
                 </li>
             </ul>
-            <ul class="nav navbar-nav navbar-right" ng-if="navigation.isAuthenticated">
+            <ul class="nav navbar-nav navbar-right" ng-if="navigation.authentication.active">
                 <li
                     auto-close="outsideClick"
                     class="dropdown"
@@ -49,7 +49,7 @@
                     </ul>
                 </li>
             </ul>
-            <ul class="nav navbar-nav navbar-right" ng-if="!navigation.isAuthenticated">
+            <ul class="nav navbar-nav navbar-right" ng-if="!navigation.authentication.active">
                 <li
                     auto-close="outsideClick"
                     class="dropdown"

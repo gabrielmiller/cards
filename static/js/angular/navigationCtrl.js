@@ -5,14 +5,14 @@
         .module('cardsApp')
         .controller('navigationCtrl', NavigationCtrl);
 
-    NavigationCtrl.$inject = ['$http', '$window'];
+    NavigationCtrl.$inject = ['$http', '$window', '$state', 'authenticationService'];
 
-    function NavigationCtrl($http, $window) {
+    function NavigationCtrl($http, $window, $state, authenticationService) {
         var vm = this;
 
         // properties
         vm.hasNewNotifications = false;
-        vm.isAuthenticated = false;
+        vm.authentication = authenticationService.getAuthentication();
         vm.isSigninDropdownOpen = false;
         vm.isUserDropdownOpen = false;
         vm.password = "";
@@ -31,7 +31,7 @@
             $http
                 .get('/user/authenticated')
                 .then(function() {
-                    vm.isAuthenticated = true;
+                    authenticationService.authenticate();
                     console.log("You're authenticated!");
                 }, function() {
                     console.log("You're not authenticated!");
@@ -56,8 +56,9 @@
 
         function logout() {
             delete $window.sessionStorage.token;
-            vm.isAuthenticated = false;
+            authenticationService.unauthenticate();
             vm.isUserDropdownOpen = false;
+            $state.go('home');
         }
 
         function signin(username, password) {
@@ -69,6 +70,7 @@
                     console.log(arguments);
                     vm.isSigninDropdownOpen = false;
                     checkIfAuthenticated();
+                    $state.go('chat');
                 }, function() {
                     console.log("authenticate: error!");
                     console.log(arguments);

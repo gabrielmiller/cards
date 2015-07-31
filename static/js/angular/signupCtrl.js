@@ -5,9 +5,9 @@
         .module('cardsApp')
         .controller('signupCtrl', SignupCtrl);
 
-    SignupCtrl.$inject = ['$http'];
+    SignupCtrl.$inject = ['$http', '$state', 'authenticationService'];
 
-    function SignupCtrl($http) {
+    function SignupCtrl($http, $state, authenticationService) {
         var vm = this;
 
         // Properties
@@ -24,9 +24,10 @@
             $http
                 .post('/user', user)
                 .then(function() {
-                    console.log("success!");
-                }, function() {
-                    console.log("failure!");
+                    authenticationService.authenticate();
+                    $state.go('chat');
+                }, function(response) {
+                    alert(response.data);
                 });
         }
 
