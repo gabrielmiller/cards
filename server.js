@@ -5,7 +5,7 @@ var Settings = require('./settings.js');
 var settings = new Settings();
 console.log("Settings loaded.");
 var color = require(settings.colors_path);
-console.log(color.fgred+"C"+color.fggreen+"o"+color.fgyellow+"l"+color.fgblue+"o"+color.fgmagenta+"r"+color.fgcyan+"s "+color.fgwhite+"l"+color.fgred+"o"+color.fggreen+"a"+color.fgyellow+"d"+color.fgblue+"e"+color.fgmagenta+"d"+color.fgcyan+"."+color.reset);
+console.log(color.red("C")+color.green("o")+color.yellow("l")+color.blue("o")+color.magenta("r")+color.cyan("s")+" l"+color.red("o")+color.green("a")+color.yellow("d")+color.blue("e")+color.magenta("d")+color.cyan("."));
 
 /**
 * Initialize node modules and express middleware
@@ -13,10 +13,10 @@ console.log(color.fgred+"C"+color.fggreen+"o"+color.fgyellow+"l"+color.fgblue+"o
 var express = require('express');
 var app = express();
 app.use(express.static(__dirname + "/static"));
-console.log(color.fgmagenta+"Express loaded."+color.reset);
+console.log(color.magenta("Express loaded."));
 
 var server = require('http').createServer(app);
-console.log(color.fggreen+"HTTP Server started."+color.reset);
+console.log(color.green("HTTP Server started."));
 
 var sqlite3 = require('sqlite3').verbose();
 var db = new sqlite3.Database(':memory:');
@@ -27,11 +27,20 @@ var expressJwt = require('express-jwt');
 var bodyParser = require('body-parser');
 
 var crypto = require('crypto');
-console.log(color.fggreen+"Crypto loaded."+color.reset);
+console.log(color.red("Crypto loaded."));
 
-//app.use('/user', expressJwt({secret: settings.jwtSecret}));
+var q = require('q');
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
+
+function signToken(user, res) {
+    var token = res.json({
+        token: jwt.sign(user, settings.jwtSecret, {
+            expiresInMinutes: 60*4 }
+        )}
+    );
+}
 
 app.post('/authenticate', function(req, res) {
 
@@ -54,14 +63,6 @@ app.post('/authenticate', function(req, res) {
             .send("Invalid credentials.");
     });
 
-    function signToken(user) {
-        var token = res.json({
-            token: jwt.sign(user, settings.jwtSecret, {
-                expiresInMinutes: 60*4 }
-            )}
-        );
-    }
-
     function validatePassword(user, password) {
         var expectedHash = crypto
             .createHmac("sha1", user.salt)
@@ -75,7 +76,7 @@ app.post('/authenticate', function(req, res) {
             return;
         }
 
-        signToken(user);
+        signToken(user, res);
     }
 
 });
@@ -112,7 +113,16 @@ app.post('/user', function(req, res) {
     var getParams = [req.body.username];
     db.get("SELECT username FROM users WHERE username = (?)", getParams, function(err, row) {
         if (!row) {
-            createUser();
+            createUser().then(function(user) {
+                signToken(user, res);
+                res
+                    .status(204)
+                    .send();
+            }, function() {
+                res
+                    .status(400)
+                    .send("Invalid request.");
+            });
             return;
         }
 
@@ -123,6 +133,8 @@ app.post('/user', function(req, res) {
     });
 
     function createUser() {
+
+        var defer = q.defer();
         var hash,
             salt = makeSalt();
 
@@ -136,11 +148,18 @@ app.post('/user', function(req, res) {
         params.push(hash);
         params.push(salt);
 
-        db.run("INSERT INTO users (username, hash, salt) VALUES (?, ?, ?)", params);
+        db.serialize(function() {
+            db.run("INSERT INTO users (username, hash, salt) VALUES (?, ?, ?)", params);
+            db.get("SELECT salt, hash FROM users WHERE username = (?)", getParams, function(err, row) {
+                if (row) {
+                    defer.resolve(row);
+                } else {
+                    defer.reject();
+                }
+            });
+        });
 
-        res
-            .status(204)
-            .send();
+        return defer.promise;;
     }
 
     function makeSalt() {
@@ -153,14 +172,14 @@ app.post('/user', function(req, res) {
     }
 });
 
-//var sio = require('socket.io').listen(server);
-//console.log(color.fgcyan+"Socket.io loaded."+color.reset);
+var sio = require('socket.io').listen(server);
+console.log(color.blue("Socket.io loaded."));
 //var string = require('string');
 
 /**
 * Load the database and models
 */
-//console.log(color.fgwhite+"DB loaded."+color.reset);
+//console.log("DB loaded.");
 
 /**
 * Load websockets
@@ -201,7 +220,6 @@ io.set('authorization', function(handshake, callback){
 */
 server.listen(settings.port);
 
-console.log(color.fgwhite+color.bold+"========================================="+color.reset);
-console.log(color.fgwhite+"Running release number "+color.bold+settings.context.version+color.reset);
-console.log(color.fggreen+"HTTP"+color.reset+" and "+color.fgred+"Socket"+color.reset+" servers are listening on port "+color.fggreen+color.bold+settings.port+color.reset+".");
-console.log(color.fgwhite+color.bold+"========================================="+color.reset);
+console.log(color.bold("========================================="));
+console.log(color.green("HTTP")+" and "+color.red("Socket.io")+" are listening on port "+color.green(color.bold(settings.port))+".");
+console.log(color.bold("========================================="));
