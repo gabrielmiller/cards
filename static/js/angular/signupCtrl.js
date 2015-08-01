@@ -22,9 +22,9 @@
 
         function signup(user) {
             $http
-                .post('/user', user)
-                .then(function() {
-                    authenticationService.authenticate();
+                .post('/api/user', user)
+                .then(function(response) {
+                    authenticationService.authenticate(response.data.token);
                     $state.go('chat');
                 }, function(response) {
                     alert(response.data);
@@ -33,7 +33,7 @@
 
         function test() {
             $http
-                .get('/user')
+                .get('/api/user')
                 .then(function() {
                     console.log("success!", arguments);
                 }, function() {

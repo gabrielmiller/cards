@@ -5,7 +5,9 @@
         .module('cardsApp')
         .service('authenticationService', AuthenticationService);
 
-    function AuthenticationService() {
+    AuthenticationService.inject = ['$window'];
+
+    function AuthenticationService($window) {
         var vm = this,
             authentication = {
                 active: false
@@ -15,12 +17,15 @@
         vm.authenticate = authenticate;
         vm.unauthenticate = unauthenticate;
 
-        function authenticate() {
+        function authenticate(token) {
             authentication.active = true;
+            console.log("Authenticated with token", token);
+            if (token) $window.sessionStorage.token = token;
         }
 
         function unauthenticate() {
             authentication.active = false;
+            delete $window.sessionStorage.token;
         }
 
         function getAuthentication() {

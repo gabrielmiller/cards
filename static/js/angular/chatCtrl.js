@@ -5,7 +5,13 @@
         .module('cardsApp')
         .controller('chatCtrl', ChatCtrl);
 
-    function ChatCtrl() {
+    ChatCtrl.$inject = ['socketIoService'];
+
+    function ChatCtrl(socketIoService) {
         var vm = this;
+
+        vm.messages = socketIoService.getMessages();
+
+        socketIoService.connect();
     }
 })();

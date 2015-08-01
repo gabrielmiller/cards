@@ -29,24 +29,12 @@
 
         function checkIfAuthenticated() {
             $http
-                .get('/user/authenticated')
-                .then(function() {
+                .get('/api/user/authenticated')
+                .then(function(response) {
                     authenticationService.authenticate();
                     console.log("You're authenticated!");
                 }, function() {
                     console.log("You're not authenticated!");
-                });
-        }
-
-        function getUser() {
-            $http
-                .get('/user')
-                .then(function() {
-                    console.log("get user: success!");
-                    console.log(arguments);
-                }, function() {
-                    console.log("get user: error!");
-                    console.log(arguments);
                 });
         }
 
@@ -55,30 +43,23 @@
         }
 
         function logout() {
-            delete $window.sessionStorage.token;
             authenticationService.unauthenticate();
             vm.isUserDropdownOpen = false;
             $state.go('home');
         }
 
         function signin(username, password) {
-            var req = $http
-                .post('/authenticate', {username: username, password: password})
+            return $http
+                .post('/api/authenticate', {username: username, password: password})
                 .then(function(response) {
-                    $window.sessionStorage.token = response.data.token;
                     console.log("authenticate: success!");
-                    console.log(arguments);
+                    authenticationService.authenticate(response.data.token);
                     vm.isSigninDropdownOpen = false;
-                    checkIfAuthenticated();
                     $state.go('chat');
                 }, function() {
                     console.log("authenticate: error!");
                     console.log(arguments);
                 });
-
-            req.finally(function() {
-                getUser();
-            });
         }
     }
 })();
