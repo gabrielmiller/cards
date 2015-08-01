@@ -34,6 +34,10 @@ var q = require('q');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 
+app.use(function(req, res) {
+    res.sendFile(__dirname + '/static/index.html');
+});
+
 function signToken(user, res) {
     var token = res.json({
         token: jwt.sign(user, settings.jwtSecret, {
