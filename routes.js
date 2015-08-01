@@ -3,7 +3,7 @@ var jwt = require('jsonwebtoken');
 var expressJwt = require('express-jwt');
 var crypto = require('crypto');
 
-function http(express, app, settings, q, db) {
+function routes(express, app, settings, q, db) {
 
     app.use(express.static(__dirname + "/static"));
     app.use(bodyParser.json());
@@ -154,4 +154,4 @@ function http(express, app, settings, q, db) {
     });
 }
 
-module.exports = http;
+module.exports = routes;

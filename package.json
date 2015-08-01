@@ -26,9 +26,9 @@
         "string": "3.3.0"
     },
     "engines": {
-        "node": "0.8.19",
-        "npm": "1.2.10"
+        "node": "0.12.x",
+        "npm": "2.11.x"
     },
     "os" : [ "linux" ],
-    "license": "BSD"
+    "license": "BSD-2-Clause"
 }

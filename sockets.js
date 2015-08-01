@@ -1,4 +1,4 @@
-socketIoJwt = require('socketio-jwt');
+var socketIoJwt = require('socketio-jwt');
 
 function sockets(settings, socketIo){
 
