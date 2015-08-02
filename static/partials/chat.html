@@ -1,6 +1,15 @@
 <div class="row-fluid">
     <div id="chat_window" class="span10">
-        <div class="container-fluid" id="chat_container"></div>
+        <div class="container-fluid" id="chat_container">
+            <div ng-repeat="message in chat.messages" class="row-fluid">
+                <div class="span12">
+                    <p>
+                        [<span ng-bind="message.dt | format: 'time'"></span>]:
+                        <span ng-bind="message.text"></span>
+                    </p>
+                </div>
+            </div>
+        </div>
     </div>
     <div id="user_window" class="span2"></div>
 </div>

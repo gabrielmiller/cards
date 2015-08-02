@@ -5,11 +5,17 @@
         .module('cardsApp')
         .service('socketIoService', SocketIoService);
 
-    SocketIoService.$inject = ['$window'];
+    SocketIoService.$inject = ['$timeout', '$window'];
 
-    function SocketIoService($window) {
+    function SocketIoService($timeout, $window) {
         var vm = this;
-        var _messages = [];
+        var _messages = [
+            {
+                dt: new Date(),
+                owner: "system",
+                text: "Connecting to server..."
+            }
+        ];
         var _socket;
 
         vm.connect = connect;
@@ -28,10 +34,24 @@
             _socket = io.connect('', {
                 query: 'token=' + token
             });
+
+            setListeners(_socket);
         }
 
         function getMessages() {
             return _messages;
+        }
+
+        function setListeners(socket) {
+            socket.on('connect', function() {
+                $timeout(function() {
+                    _messages.push({
+                        dt: new Date(),
+                        owner: "system",
+                        text: "Connected to server."
+                    });
+                });
+            });
         }
 
     }
