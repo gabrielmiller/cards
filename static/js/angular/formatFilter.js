@@ -20,10 +20,9 @@
         }
 
         return function(input, formatMethod) {
-            var args = arguments;
             if (!angular.isFunction(_filters[formatMethod])) return "";
-            if (angular.isArray(args)) args.splice(1, 1);
-            return _filters[formatMethod].apply(this, args);
+            if (angular.isArray(arguments)) arguments.splice(1, 1);
+            return _filters[formatMethod].apply(this, arguments);
         }
     }
 })();
