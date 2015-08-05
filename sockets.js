@@ -19,16 +19,16 @@ function sockets(settings, socketIo){
             console.log("disconnected");
         });
 
+        socket.on('message', function(data){
+            sendMessage(socket, data);
+        });
+
         /*
         socket.username = string(socket.handshake.session.username).escapeHTML().s;
         socket.mid = socket.handshake.session._id // mongo ID
 
         socket.on('connect', function(data){
             connect(socket, data);
-        });
-
-        socket.on('message', function(data){
-            message(socket, data);
         });
 
         socket.on('disconnect', function(){
@@ -63,9 +63,9 @@ function sockets(settings, socketIo){
         }
     }
 
-    function message(socket, data){
+    function sendMessage(socket, data){
         data.user = socket.username;
-        data.message = string(data.message).escapeHTML().s;
+        data.message = data.message;
         socketIo.sockets.emit('message', data );
     }
 

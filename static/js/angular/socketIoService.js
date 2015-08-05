@@ -20,6 +20,8 @@
 
         vm.connect = connect;
         vm.getMessages = getMessages;
+        vm.sendMessage = sendMessage;
+
 
         function connect() {
             if ("token" in $window.sessionStorage) {
@@ -42,6 +44,12 @@
             return _messages;
         }
 
+        function sendMessage(body) {
+            if (typeof body !== "string") return;
+            _socket.emit("message", { message: body });
+        }
+
+
         function setListeners(socket) {
             socket.on('connect', function() {
                 $timeout(function() {
@@ -52,7 +60,16 @@
                     });
                 });
             });
-        }
 
+            socket.on('message', function(data) {
+                $timeout(function() {
+                    _messages.push({
+                        dt: new Date(),
+                        owner: data.user,
+                        text: data.message
+                    });
+                });
+            });
+        }
     }
 })();
