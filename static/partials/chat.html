@@ -4,7 +4,8 @@
             <div ng-repeat="message in chat.messages" class="row-fluid">
                 <div class="span10">
                     <p>
-                        [<span ng-bind="message.dt | format: 'time'"></span>]:
+                        [<span ng-bind="message.dt | format: 'time'"></span>]
+                        <span ng-bind="message.owner"></span>:
                         <span ng-bind="message.text"></span>
                     </p>
                 </div>

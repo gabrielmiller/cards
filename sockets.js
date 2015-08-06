@@ -2,7 +2,7 @@ var socketIoJwt = require('socketio-jwt');
 
 function sockets(settings, socketIo){
 
-    socketIo.set('authorization', socketIoJwt.authorize({
+    socketIo.use(socketIoJwt.authorize({
         secret: settings.jwtSecret,
         handshake: true
     }));
@@ -13,7 +13,7 @@ function sockets(settings, socketIo){
     invitees = new Object();
 
     socketIo.on('connection', function(socket){
-        console.log("connected!");
+        console.log("connected!", socket.decoded_token);
 
         socket.on('disconnect', function(){
             console.log("disconnected");
@@ -64,7 +64,8 @@ function sockets(settings, socketIo){
     }
 
     function sendMessage(socket, data){
-        data.user = socket.username;
+        console.log("socket is", socket);
+        data.user = socket.decoded_token;
         data.message = data.message;
         socketIo.sockets.emit('message', data );
     }
