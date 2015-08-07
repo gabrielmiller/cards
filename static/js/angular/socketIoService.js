@@ -54,9 +54,10 @@
             socket.on('connect', function() {
                 $timeout(function() {
                     _messages.push({
+                        author: "system",
                         dt: new Date(),
-                        owner: "system",
-                        text: "Connected to server."
+                        text: "Connected to server.",
+                        type: "system"
                     });
                 });
             });
@@ -64,9 +65,10 @@
             socket.on('message', function(data) {
                 $timeout(function() {
                     _messages.push({
+                        author: data.user,
                         dt: new Date(),
-                        owner: data.user,
-                        text: data.message
+                        text: data.message,
+                        type: "message"
                     });
                 });
             });

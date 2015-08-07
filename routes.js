@@ -12,7 +12,9 @@ function routes(express, app, settings, q, db) {
     function signToken(username, res) {
         console.log("Signing token for user", username);
         var token = res.json({
-            token: jwt.sign(username, settings.jwtSecret, {
+            token: jwt.sign({
+                username: username
+            }, settings.jwtSecret, {
                 expiresInMinutes: 60*4 }
             )}
         );

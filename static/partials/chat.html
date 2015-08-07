@@ -3,10 +3,16 @@
         <div class="container-fluid" id="chat_container">
             <div ng-repeat="message in chat.messages" class="row-fluid">
                 <div class="span10">
-                    <p>
-                        [<span ng-bind="message.dt | format: 'time'"></span>]
-                        <span ng-bind="message.owner"></span>:
-                        <span ng-bind="message.text"></span>
+                    <p ng-switch="message.type">
+                        <span ng-switch-when="message">
+                            [<span ng-bind="message.dt | format: 'time'"></span>]
+                            <span ng-bind="message.author"></span>:
+                            <span ng-bind="message.text"></span>
+                        </span>
+                        <span class="system" ng-switch-when="system">
+                            [<span ng-bind="message.dt | format: 'time'"></span>]
+                            <span ng-bind="message.text"></span>
+                        </span>
                     </p>
                 </div>
             </div>

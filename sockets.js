@@ -65,7 +65,7 @@ function sockets(settings, socketIo){
 
     function sendMessage(socket, data){
         console.log("socket is", socket);
-        data.user = socket.decoded_token;
+        data.user = socket.decoded_token.username;
         data.message = data.message;
         socketIo.sockets.emit('message', data );
     }
