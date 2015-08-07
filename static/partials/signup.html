@@ -1,30 +1,43 @@
 <div class="container">
     <div class="row">
-        <div class="col-md-4 col-md-offset-4">
-            <form id="signup" name="signup.form" ng-submit="signup.signup(signup.user)" role="form">
-                <h3>Sign Up</h3>
-                <hr>
-                <div class="form-group">
-                    <label for="userName">User Name</label>
-                    <input
-                        class="form-control"
-                        ng-model="signup.user.username"
-                        ng-required="true"
-                        placeholder="User Name"
-                        type="text">
-                </div>
-                <div class="form-group">
-                    <label for="signupPassword">Password</label>
-                    <input
-                        class="form-control"
-                        ng-model="signup.user.password"
-                        ng-required="true"
-                        placeholder="Password"
-                        type="password">
-                </div>
-                <button type="submit" class="btn btn-primary" ng-disabled="signup.form.$invalid">Submit</button>
-                <button type="button" ng-click="signup.test()" class="btn btn-primary">Test</button>
-            </form>
+        <div class="col-md-6 col-md-offset-2">
+            <h2>Sign Up</h2>
+            <div class="well">
+                <form class="form-horizontal" name="signup.form" ng-submit="signup.signup(signup.user)" role="form">
+                    <fieldset>
+                        <legend>Create a user</legend>
+                        <div class="form-group">
+                            <label for="userName" class="control-label col-md-3">User Name</label>
+                            <div class="col-md-9">
+                                <input
+                                    class="form-control"
+                                    id="userName"
+                                    ng-model="signup.user.username"
+                                    ng-required="true"
+                                    placeholder="User Name"
+                                    type="text">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="signupPassword" class="control-label col-md-3">Password</label>
+                            <div class="col-md-9">
+                                <input
+                                    class="form-control"
+                                    id="signupPassword"
+                                    ng-model="signup.user.password"
+                                    ng-required="true"
+                                    placeholder="Password"
+                                    type="password">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-9 col-md-offset-3">
+                                <button type="submit" class="btn btn-primary" ng-disabled="signup.form.$invalid">Submit</button>
+                            </div>
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
         </div>
     </div>
 </div>

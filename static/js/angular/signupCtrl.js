@@ -18,7 +18,6 @@
 
         // Methods
         vm.signup = signup;
-        vm.test = test;
 
         function signup(user) {
             $http
@@ -30,16 +29,5 @@
                     alert(response.data);
                 });
         }
-
-        function test() {
-            $http
-                .get('/api/user')
-                .then(function() {
-                    console.log("success!", arguments);
-                }, function() {
-                    console.log("failure!");
-                });
-        }
-
     }
 })();
