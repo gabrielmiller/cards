@@ -35,6 +35,7 @@
                     console.log("You're authenticated!");
                 }, function() {
                     console.log("You're not authenticated!");
+                    $state.go('home');
                 });
         }
 
